@@ -39,7 +39,8 @@ for term in search_terms:
             location=location,
             results_wanted=20,
             hours_old=1000,
-            country_indeed="South Africa"
+            country_indeed="South Africa",
+            fetch_description=True
         )
 
         if not jobs.empty:
@@ -55,11 +56,18 @@ if all_jobs:
         subset=["job_url"],
         inplace=True
     )
-columns = ["title", "company", "location", "job_url"]
-combine_jobs = combined_jobs[columns]
+
+columns = ["title", "company", "location", "job_url", "description"]
+available_columns = [
+    column for column in columns
+    if column in combined_jobs.columns
+]
+
+combined_jobs = combined_jobs[available_columns].copy()
+
 print(combined_jobs.head())
 print(f"\nFound {len(combined_jobs)} unique jobs")
-combine_jobs.to_excel(
+combined_jobs.to_excel(
     "jobs.xlsx", index=False)
 
 subprocess.run(
